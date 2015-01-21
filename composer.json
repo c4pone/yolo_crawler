@@ -1,7 +1,7 @@
 {
     "name": "c4pone/yolo_crawler",
     "description": "An event based domain crawler",
-    "keywords": ["webcrawler", "event", "crawler"],
+    "keywords": ["event", "crawler","yolo"],
     "license": "MIT",
     "authors": [
         {
@@ -10,9 +10,8 @@
         }
     ],
     "require": {
-        "symfony/dom-crawler": "3.0.*@dev",
+        "symfony/dom-crawler": "dev-master",
         "guzzlehttp/guzzle": "dev-master",
-        "mnapoli/php-di": "~4.0",
         "chuyskywalker/rolling-curl": "dev-master",
         "symfony/event-dispatcher": "3.0.*@dev"
     },
@@ -27,5 +26,5 @@
             "WP\\Crawler\\": "src/"
         }
     },
-    "minimum-stability": "dev"
+    "minimum-stability": "stable"
 }
