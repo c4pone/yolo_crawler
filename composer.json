@@ -10,7 +10,7 @@
         }
     ],
     "require": {
-        "symfony/dom-crawler": "v2.6.3",
+        "symfony/dom-crawler": "2.5.x-dev",
         "guzzlehttp/guzzle": "5.0.*@dev",
         "chuyskywalker/rolling-curl": "dev-master",
         "symfony/event-dispatcher": "3.0.x-dev"
