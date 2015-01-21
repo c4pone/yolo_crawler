@@ -10,13 +10,13 @@
         }
     ],
     "require": {
-        "symfony/dom-crawler": "dev-master",
-        "guzzlehttp/guzzle": "dev-master",
+        "symfony/dom-crawler": "v2.6.3",
+        "guzzlehttp/guzzle": "5.0.*@dev",
         "chuyskywalker/rolling-curl": "dev-master",
-        "symfony/event-dispatcher": "3.0.*@dev"
+        "symfony/event-dispatcher": "3.0.x-dev"
     },
     "require-dev": {
-        "phpunit/phpunit": "4.3.*",
+        "phpunit/phpunit": "3.7.x-dev",
         "mockery/mockery" : "dev-master",
         "squizlabs/php_codesniffer": "1.5.1",
         "satooshi/php-coveralls": "dev-master"
