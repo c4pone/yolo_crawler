@@ -22,18 +22,18 @@ HTML;
         $this->assertEquals('link1', $links[0]->getLinkHref());
         $this->assertEquals('link2', $links[1]->getLinkHref());
 
-        $this->assertEquals('this is the title', $links[0]->getPageTitle());
-        $this->assertEquals('this is the title', $links[1]->getPageTitle());
-
         $this->assertEquals('test', $links[0]->getLinkText());
         $this->assertEquals('test', $links[1]->getLinkText());
     }
-    
-    public function testGetLinksFromDmoz()
+
+    public function testDmoz()
     {
         $html = file_get_contents(__DIR__.'/data/dmoz.html');
         $extractor = new LinkFinder();
         $links = $extractor->getLinks($html);
+        $title = $extractor->getTitle($html);
+
         $this->assertEquals(103, count($links));
+        $this->assertEquals('DMOZ - the Open Directory Project', $title);
     }
 }
