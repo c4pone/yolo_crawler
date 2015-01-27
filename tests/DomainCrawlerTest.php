@@ -26,6 +26,7 @@ class DomainCrawlerTest extends PHPUnit_Framework_TestCase {
             CrawlerEvents::onPopLinkFromQueue => 0,
             CrawlerEvents::onPageDownload => 0,
             CrawlerEvents::onFoundLinks => 0,
+            CrawlerEvents::onLinkProcessed => 0,
         );
 
         $html = <<<'HTML'
@@ -65,6 +66,9 @@ HTML;
         $dispatcher->addListener(CrawlerEvents::onPageDownload, function (Event $event) use ($test, &$events){
             $events[CrawlerEvents::onPageDownload]++;
         });
+        $dispatcher->addListener(CrawlerEvents::onLinkProcessed, function (Event $event) use ($test, &$events){
+            $events[CrawlerEvents::onLinkProcessed]++;
+        });
         $dispatcher->addListener(CrawlerEvents::onFoundLinks, function (FoundLinksEvent $event) use ($test, &$events){
             $events[CrawlerEvents::onFoundLinks]++;
 
@@ -84,6 +88,7 @@ HTML;
         $this->assertEquals(1, $events[CrawlerEvents::onFinish]);
         $this->assertEquals(6, $events[CrawlerEvents::onPushLinkToQueue]);
         $this->assertEquals(1, $events[CrawlerEvents::onPopLinkFromQueue]);
+        $this->assertEquals(1, $events[CrawlerEvents::onLinkProcessed]);
         $this->assertEquals(1, $events[CrawlerEvents::onPageDownload]);
         $this->assertEquals(1, $events[CrawlerEvents::onFoundLinks]);
     }

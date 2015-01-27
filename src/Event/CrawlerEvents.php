@@ -66,4 +66,15 @@ final class CrawlerEvents
      * @var string
      */
     const onFoundLinks = 'crawler.found_links';
+
+    /**
+     * The onLinkProcessed event is thrown each time
+     * a Link got processed
+     *
+     * The event listener receives an
+     * WP\Crawler\Event\FoundLinksEvent instance.
+     *
+     * @var string
+     */
+    const onLinkProcessed = 'crawler.link_processed';
 }

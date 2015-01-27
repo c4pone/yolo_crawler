@@ -104,15 +104,13 @@ class DomainCrawler {
         $this->dispatcher->dispatch(CrawlerEvents::onStart, new FilterCrawlerProcessEvent($process));
         $this->_domain = $domain;
 
-        // set the seed
+        // create seed 
         $link = new Link($startPoint);
         $link->setOriginDomain($this->_domain->getDomain());
         $this->pushLinkToQueue($link);
 
         // Start queue
         while ($process->isRunning() && ($link = $this->queue->pop()) !== false) {
-
-            // fire onPopLinkFromQueue Event
             $this->dispatcher->dispatch(CrawlerEvents::onPopLinkFromQueue, new FilterLinkEvent($link, $process));
 
             // download web page
@@ -121,12 +119,25 @@ class DomainCrawler {
             // extract links from response and add them to queue
             $this->findLinksAndAddToQueue($response, $link, $process);
 
+            // fill the link with the data we get from the response
+            $this->extractDataFromResponse($link, $response);
+
+            $this->dispatcher->dispatch(CrawlerEvents::onLinkProcessed, new FilterLinkEvent($link, $process));
+
             // so we don't dos the server
             sleep($this->wait_time);
         }
 
         $process->done();
         $this->dispatcher->dispatch(CrawlerEvents::onFinish, new FilterCrawlerProcessEvent($process));
+    }
+
+    private function extractDataFromResponse(Link $link, $response)
+    {
+        $html = $response->getBody()->__toString();
+
+        $link->setPageTitle($this->finder->getTitle($html));
+        $link->setStatusCode($response->getStatusCode());
     }
 
     private function pushLinkToQueue(Link $link)
@@ -148,12 +159,13 @@ class DomainCrawler {
 
     private function findLinksAndAddToQueue($response, Link $origin, &$process)
     {
-        $links = $this->finder->getLinks($response->getBody()->__toString());
+        $html = $response->getBody()->__toString();
+        $links = $this->finder->getLinks($html);
 
         foreach ($links as &$link)
         {
             $link->setOriginDomain($this->_domain->getDomain())
-                ->setOrigin($origin);
+                 ->setOrigin($origin);
             $this->pushLinkToQueue($link);
         }
 
