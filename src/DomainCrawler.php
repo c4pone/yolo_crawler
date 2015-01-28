@@ -1,69 +1,99 @@
 <?php namespace WP\Crawler;
 
 use WP\Crawler\Domain;
-use WP\Crawler\Extractor\Extractor;
 use WP\Crawler\Event\CrawlerEvents;
 use WP\Crawler\Event\FilterDomainEvent;
 use WP\Crawler\Event\FilterLinkEvent;
 use WP\Crawler\Event\FilterPageResponseEvent;
 use WP\Crawler\Event\FoundLinksEvent;
 use WP\Crawler\Event\FilterCrawlerProcessEvent;
+use WP\Crawler\Downloader\Downloader;
+use WP\Crawler\Downloader\PageDownloader;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\EventDispatcher\Event;
 
 class DomainCrawler {
-    private $client;
     private $dispatcher;
     private $queue;
     private $finder;
+    private $downloader;
+
+    /*
+     * Keeps the domain that we crawl
+     *
+     * @var string 
+     */
     private $_domain;
-    protected $wait_time;
+
+    /*
+     * Time to wait between each request
+     *
+     * @var int 
+     */
+    private $wait_time = 10;
+
+    /*
+     * Maximum attempts to download a page
+     *
+     * @var int 
+     */
+    private $download_tries = 3;
 
     public function __construct(
         Queue\QueueManagerInterface $queue,
         LinkFinderInterface $finder
     )
     {
-        $this->client = new \GuzzleHttp\Client();
+        $this->downloader = new PageDownloader();
         $this->dispatcher = new EventDispatcher();
-        $this->wait_time = 10;
         $this->queue = $queue;
         $this->finder = $finder;
     }
 
     /*
-     * Sets the secounds that the crawler
-     * waits between each request
+     * Set maximum attempts to download a page
      *
-     * @param int $sec
+     * @param int $tries 
+     * @return $this;
+     */
+    public function setDownloadTries($tries)
+    {
+         $this->download_tries = $tries;
+         return $this;
+    }
+
+    /*
+     * Set the time to wait between each request
+     *
+     * @param int $sec 
      * @return $this;
      */
     public function setWaitTime($sec)
     {
-        $this->wait_time = $sec;
-        return $this;
+         $this->wait_time = $sec;
+         return $this;
     }
 
     /*
-     * Sets Client
+     * Sets Downloader
      *
-     * @param \GuzzleHttp\Client $client
+     * @param WP\Crawler\Downloader\Downloader $downloader
      * @return $this;
      */
-    public function setClient(\GuzzleHttp\Client $client)
+    public function setDownloader(Downloader $downloader)
     {
-        $this->client = $client; 
+        $this->downloader = $downloader; 
         return $this;
     }
 
     /*
-     * Gets Client
+     * Gets Downlaoder
      *
-     * @return \GuzzleHttp\Client
+     * @return WP\Crawler\Downloader\Downloader 
      */
-    public function getClient()
+    public function getDownloader()
     {
-        return $this->client; 
+        return $this->downloader; 
     }
 
     /**
@@ -116,11 +146,13 @@ class DomainCrawler {
             // download web page
             $response = $this->downloadPage($link, $process);
 
-            // extract links from response and add them to queue
-            $this->findLinksAndAddToQueue($response, $link, $process);
+            if ($response !== null) {
+                // extract links from response and add them to queue
+                $this->findLinksAndAddToQueue($response, $link, $process);
 
-            // fill the link with the data we get from the response
-            $this->extractDataFromResponse($link, $response);
+                // fill the link with the data we get from the response
+                $this->extractDataFromResponse($link, $response);
+            }
 
             $this->dispatcher->dispatch(CrawlerEvents::onLinkProcessed, new FilterLinkEvent($link, $process));
 
@@ -148,11 +180,15 @@ class DomainCrawler {
 
     private function downloadPage(Link $link, &$process)
     {
-        $_url = $link->getFullUrl();
-        $response = $this->client->get($_url, ['exceptions' => false]);
+        $response = null;
 
-        $this->dispatcher->dispatch(CrawlerEvents::onPageDownload, 
-            new FilterPageResponseEvent($link, $response, $process));
+        try {
+            $response = $this->downloader->download($link->getFullUrl(), $this->download_tries);
+            $this->dispatcher->dispatch(CrawlerEvents::onPageDownload, 
+                new FilterPageResponseEvent($link, $response, $process));
+        } catch (DownloadException $e) { 
+            $link->setStatusCode(69);
+        }
 
         return $response;
     }

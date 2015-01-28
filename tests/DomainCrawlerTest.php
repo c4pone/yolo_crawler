@@ -9,6 +9,10 @@ use WP\Crawler\Queue\Store\ArrayStore;
 use WP\Crawler\Link;
 use WP\Crawler\Extractor\Result\ArrayResultKeeper;
 
+use WP\Crawler\Downloader\DownloadException;
+use WP\Crawler\Downloader\Downloader;
+use WP\Crawler\Downloader\PageDownloader;
+
 use WP\Crawler\Event\CrawlerEvents;
 use WP\Crawler\Event\FilterCrawlerProcessEvent;
 use WP\Crawler\Event\FoundLinksEvent;
@@ -165,6 +169,9 @@ HTML;
         $client = \Mockery::mock('\GuzzleHttp\Client');
         $client->shouldReceive('get')->andReturn($response);
 
+        $downloader = new PageDownloader();
+        $downloader->setClient($client);
+
         $manager = new QueueManager(new ArrayQueue(), new ArrayStore());
         $manager->addValidator(new FuckThatLink());
 
@@ -173,7 +180,7 @@ HTML;
             new LinkFinder()
         );
 
-        $crawler->setClient($client);
+        $crawler->setDownloader($downloader);
 
         return $crawler;
     }
