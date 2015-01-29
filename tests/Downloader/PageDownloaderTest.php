@@ -34,7 +34,8 @@ class FakeClient extends \GuzzleHttp\Client {
     public function get($url = NULL, $options = array()) {
         $this->_tries++;
         if ($this->_tries <= $this->tries) {
-            throw \Mockery::mock('\GuzzleHttp\Exception\ConnectException');
+            throw new \GuzzleHttp\Exception\ConnectException(null, 
+                new \GuzzleHttp\Message\Request('get', $url));
         }
 
         return 'foo';
