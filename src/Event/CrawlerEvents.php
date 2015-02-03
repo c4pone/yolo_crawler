@@ -47,7 +47,7 @@ final class CrawlerEvents
 
     /**
      * The onPageDownload event is thrown each time
-     * a page web page got downloaded 
+     * a page web page got tried to download 
      *
      * The event listener receives an
      * WP\Crawler\Event\FilterPageResponseEvent instance.

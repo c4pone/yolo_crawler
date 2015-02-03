@@ -147,11 +147,11 @@ class DomainCrawler {
             $response = $this->downloadPage($link, $process);
 
             if ($response !== null) {
-                // extract links from response and add them to queue
-                $this->findLinksAndAddToQueue($response, $link, $process);
-
                 // fill the link with the data we get from the response
                 $this->extractDataFromResponse($link, $response);
+
+                // extract links from response and add them to queue
+                $this->findLinksAndAddToQueue($response, $link, $process);
             }
 
             $this->dispatcher->dispatch(CrawlerEvents::onLinkProcessed, new FilterLinkEvent($link, $process));
@@ -184,11 +184,12 @@ class DomainCrawler {
 
         try {
             $response = $this->downloader->download($link->getFullUrl(), $this->download_tries);
-            $this->dispatcher->dispatch(CrawlerEvents::onPageDownload, 
-                new FilterPageResponseEvent($link, $response, $process));
         } catch (DownloadException $e) { 
             $link->setStatusCode(69);
         }
+
+        $this->dispatcher->dispatch(CrawlerEvents::onPageDownload, 
+            new FilterPageResponseEvent($link, $response, $process));
 
         return $response;
     }
