@@ -145,13 +145,15 @@ class DomainCrawler {
 
             // download web page
             $response = $this->downloadPage($link, $process);
+            $link->setResponse($response);
 
             if ($response !== null) {
                 // fill the link with the data we get from the response
-                $this->extractDataFromResponse($link, $response);
+                $link->setStatusCode($response->getStatusCode());
+                $link->setPageTitle($this->finder->getTitle($link->getHtml()));
 
                 // extract links from response and add them to queue
-                $this->findLinksAndAddToQueue($response, $link, $process);
+                $this->findLinksAndAddToQueue($link, $process);
             }
 
             $this->dispatcher->dispatch(CrawlerEvents::onLinkProcessed, new FilterLinkEvent($link, $process));
@@ -162,14 +164,6 @@ class DomainCrawler {
 
         $process->done();
         $this->dispatcher->dispatch(CrawlerEvents::onFinish, new FilterCrawlerProcessEvent($process));
-    }
-
-    private function extractDataFromResponse(Link $link, $response)
-    {
-        $html = $response->getBody()->__toString();
-
-        $link->setPageTitle($this->finder->getTitle($html));
-        $link->setStatusCode($response->getStatusCode());
     }
 
     private function pushLinkToQueue(Link $link)
@@ -194,9 +188,9 @@ class DomainCrawler {
         return $response;
     }
 
-    private function findLinksAndAddToQueue($response, Link $origin, &$process)
+    private function findLinksAndAddToQueue(Link $origin, &$process)
     {
-        $html = $response->getBody()->__toString();
+        $html = $origin->getHtml();
         $links = $this->finder->getLinks($html);
 
         foreach ($links as &$link)
