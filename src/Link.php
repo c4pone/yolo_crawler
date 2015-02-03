@@ -11,6 +11,8 @@ class Link {
     private $origin_domain;
     private $status_code;
 
+    private $response;
+
     public function __construct($href)
     {
         $this->link_href = $href;
@@ -143,6 +145,24 @@ class Link {
     {
         $this->status_code = $code; 
         return $this;
+    }
+
+    public function setResponse($response)
+    {
+        $this->response = $response; 
+    }
+
+    public function getResponse()
+    {
+        return $this->response; 
+    }
+
+    public function getHtml()
+    {
+        if ($this->response === null)
+            return '';
+
+        return $this->response->getBody()->__toString();
     }
 }
 
