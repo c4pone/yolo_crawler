@@ -3,6 +3,7 @@
 class PageDownloader implements Downloader
 {
     private $client;
+    private $userAgent;
 
     /*
      * Time to wait between each try
@@ -13,6 +14,7 @@ class PageDownloader implements Downloader
     
     public function __construct() {
         $this->client = new \GuzzleHttp\Client();
+        $this->userAgent = new UserAgent();
     }
 
     /*
@@ -70,12 +72,16 @@ class PageDownloader implements Downloader
      */
     private function downloadPage($path, $current_try, $max_tries)
     {
+        $userAgent = $this->userAgent->getRandomOne();
+
         if ($current_try > $max_tries) {
             throw new DownloadException($max_tries . ' attempts failed to download this page');
         }
 
         try {
-            $response = $this->client->get($path, ['exceptions' => false]);
+            $response = $this->client->get($path, [ 'exceptions' => false, 'header' => [
+                'User-Agent' => $userAgent
+            ]]);
         } catch (\GuzzleHttp\Exception\ConnectException $e) {
             sleep($this->wait_time);
             $this->downloadPage($path, ++$current_try, $max_tries);
@@ -84,4 +90,3 @@ class PageDownloader implements Downloader
         return $response;
     }
 }
-

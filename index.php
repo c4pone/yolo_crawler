@@ -30,7 +30,7 @@ if (isset($argv[1])) {
 
     $dispatcher = $crawler->getEventDispatcher();
     $dispatcher->addSubscriber(new LogSubscriber);
-    $dispatcher->addSubscriber(new BrokenLinkFinderSubscriber);
+    /* $dispatcher->addSubscriber(new BrokenLinkFinderSubscriber); */
 
     $crawler->crawl($domain);
 
