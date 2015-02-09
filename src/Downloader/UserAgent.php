@@ -33,6 +33,6 @@ class UserAgent {
      */
     public function getRandomOne()
     {
-        return $this->list[rand(0,count($this->list))];
+        return $this->list[rand(1, count($this->list)-1)];
     }
 }
