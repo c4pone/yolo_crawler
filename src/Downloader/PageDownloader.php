@@ -79,7 +79,7 @@ class PageDownloader implements Downloader
         }
 
         try {
-            $response = $this->client->get($path, [ 'exceptions' => false, 'header' => [
+            $response = $this->client->get($path, [ 'exceptions' => false, 'headers' => [
                 'User-Agent' => $userAgent
             ]]);
         } catch (\GuzzleHttp\Exception\ConnectException $e) {
