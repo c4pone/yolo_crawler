@@ -10,13 +10,14 @@ class FilterLinkEvent extends FilterCrawlerProcessEvent
     {
         $this->link = $link;
     }
+
     public function getLink()
     {
         return $this->link;
     }
+
     public function setLink($link)
     {
         $this->link = $link;
     }
-
 }

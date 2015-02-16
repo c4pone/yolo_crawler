@@ -22,5 +22,4 @@ class FilterPageResponseEvent extends FilterLinkEvent {
     {
         $this->response = $response;
     }
-
 }

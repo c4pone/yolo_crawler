@@ -20,5 +20,4 @@ class FilterCrawlerProcessEvent extends Event
     {
         $this->process = $process;
     }
-
 }
