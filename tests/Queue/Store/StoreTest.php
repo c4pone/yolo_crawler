@@ -13,4 +13,14 @@ class StoreTest extends PHPUnit_Framework_TestCase {
         $this->assertTrue($store->has($ns, 'key'));
         $this->assertEquals('value2', $store->get($ns,'key'));
     }
+
+    public function testReset()
+    {
+        $ns = 'test';
+        $store = new ArrayStore();
+        $store->set($ns, 'key', 'value');
+        $store->reset($ns);
+
+        $this->assertFalse($store->has($ns, 'key'));
+    }
 }

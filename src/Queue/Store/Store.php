@@ -29,4 +29,12 @@ interface Store
      * @return boolean
      */
     public function has($namespace, $key);
+
+    /**
+     * Resets all values in the store
+     *
+     * @param  string   $namespace
+     * @return void
+     */
+    public function reset($namespace);
 }

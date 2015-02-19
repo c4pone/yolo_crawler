@@ -23,4 +23,9 @@ class ArrayStore implements Store
 
         return array_key_exists($key, $this->store[$namespace]);
     }
+
+    public function reset($namespace)
+    {
+        $this->store[$namespace] = array();
+    }
 }
