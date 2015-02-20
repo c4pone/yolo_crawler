@@ -17,6 +17,7 @@ class DomainCrawler {
     private $queue;
     private $finder;
     private $downloader;
+    private $linkFactory;
 
     /*
      * Keeps the domain that we crawl
@@ -46,6 +47,7 @@ class DomainCrawler {
     {
         $this->downloader = new PageDownloader();
         $this->dispatcher = new EventDispatcher();
+        $this->linkFactory = new LinkFactory();
         $this->queue = $queue;
         $this->finder = $finder;
     }
@@ -130,13 +132,15 @@ class DomainCrawler {
         $process = new CrawlerProcess();
         $process->start();
 
-        $domain = new Domain($domain);
-        $this->dispatcher->dispatch(CrawlerEvents::onStart, new FilterCrawlerProcessEvent($process));
+        $domain = new Domain($domain, $startPoint);
         $this->_domain = $domain;
 
+        $this->dispatcher->dispatch(CrawlerEvents::onStart, new FilterCrawlerProcessEvent($process));
+
         // create seed 
-        $link = new Link($startPoint);
-        $link->setOriginDomain($this->_domain->getDomain());
+        $link = new Link($domain->getUrl());
+        $link->setOriginDomain($domain);
+
         $this->pushLinkToQueue($link);
 
         // Start queue
@@ -177,7 +181,7 @@ class DomainCrawler {
         $response = null;
 
         try {
-            $response = $this->downloader->download($link->getFullUrl(), $this->download_tries);
+            $response = $this->downloader->download($link->getLinkHref(), $this->download_tries);
         } catch (DownloadException $e) { 
             $link->setStatusCode(69);
         }
@@ -191,12 +195,13 @@ class DomainCrawler {
     private function findLinksAndAddToQueue(Link $origin, &$process)
     {
         $html = $origin->getHtml();
-        $links = $this->finder->getLinks($html);
+        $crawled_links = $this->finder->getLinks($html);
+        $links = array();
 
-        foreach ($links as &$link)
+        foreach ($crawled_links as $link_data)
         {
-            $link->setOriginDomain($this->_domain->getDomain())
-                 ->setOrigin($origin);
+            $link = $this->linkFactory->getLink($link_data, $this->_domain, $origin);
+            $links[] = $link;
             $this->pushLinkToQueue($link);
         }
 

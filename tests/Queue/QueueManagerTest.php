@@ -4,54 +4,49 @@ use WP\Crawler\Queue\ArrayQueue;
 use WP\Crawler\Queue\QueueManager;
 use WP\Crawler\Queue\Store\ArrayStore;
 use WP\Crawler\Link;
+use WP\Crawler\Domain;
 use WP\Crawler\Queue\Validator\Validator;
 
 class QueueManagerTest extends PHPUnit_Framework_TestCase {
 
-    public function testPushAndPopOneItem()
+    public function testPushAndPop()
     {
         $manager = new QueueManager(new ArrayQueue(), new ArrayStore());
-        $manager->push(new Link('/blub/test'));
-        $manager->push(new Link('/blub/test'));
-        $manager->push(new Link('/test'));
+        $manager->push($this->newLink('http://codebuster.de/blub/test','codebuster.de'));
+        $manager->push($this->newLink('http://codebuster.de/blub/test','codebuster.de'));
+        $manager->push($this->newLink('http://codebuster.de/test','codebuster.de'));
 
-        $this->assertEquals('/test', $manager->pop()->getLinkHref());
-        $this->assertEquals('/blub/test', $manager->pop()->getLinkHref());
+        $this->assertEquals('http://codebuster.de/test', $manager->pop()->getLinkHref());
+        $this->assertEquals('http://codebuster.de/blub/test', $manager->pop()->getLinkHref());
         $this->assertFalse($manager->pop());
     }
 
     public function testPushAndPopWithAValidator()
     {
-        $manager = new QueueManager(new ArrayQueue(), new ArrayStore());
+        $queue = new ArrayQueue();
+        $manager = new QueueManager($queue, new ArrayStore());
         $manager->addValidator(new YoloValidator());
-        $manager->push(new Link('/blub/test'));
-        $manager->push(new Link('yolo'));
-        $manager->push(new Link('/test'));
+        $manager->push($this->newLink('http://codebuster.de/blub/test','codebuster.de'));
+        $manager->push($this->newLink('http://codebuster.de/yolo','codebuster.de'));
+        $manager->push($this->newLink('http://codebuster.de/test','codebuster.de'));
 
-        $this->assertEquals('yolo', $manager->pop()->getLinkHref());
+        $this->assertEquals('http://codebuster.de/yolo', $manager->pop()->getLinkHref());
         $this->assertFalse($manager->pop());
     }
 
-    public function testPushAndPopWithDuplicates()
+    public function newLink($url, $domain)
     {
-        $manager = new QueueManager(new ArrayQueue(), new ArrayStore());
-
-        $link_a = new Link('yolo');
-        $link_a->setOriginDomain('http://google.com.au');
-        $link_b = new Link('http://google.com.au/yolo');
-
-        $manager->push($link_a);
-        $manager->push($link_b);
-
-        $this->assertEquals('yolo', $manager->pop()->getLinkHref());
-        $this->assertFalse($manager->pop());
+        $domain = new Domain($domain);
+        $link = new Link($url);
+        $link->setOriginDomain($domain);
+        return $link;
     }
 }
 
 class YoloValidator implements Validator {
     public function isValid(Link $link)
     {
-        return ($link->getLinkHref() === 'yolo');
+        return (strpos($link->getLinkHref(), 'yolo') !== false);
     }
 }
 

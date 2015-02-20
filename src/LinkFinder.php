@@ -10,8 +10,10 @@ class LinkFinder implements LinkFinderInterface {
         $crawler = new Crawler($html);
 
         $links = $crawler->filterXPath('//a[@href]')->each(function (Crawler $node, $i) {
-            $link = new Link($node->attr('href'));
-            $link->setLinkText($node->text());
+            $link = array(
+                'href'=> $node->attr('href'),
+                'text'=> $node->text()
+            );
             return $link;
         });
 

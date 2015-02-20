@@ -2,32 +2,33 @@
 
 class Domain {
     protected $domain;
-    public function __construct($url) 
+    private $url;
+
+    public function __construct($url, $startPoint = '/') 
     {
-        $this->domain = $this->convertDomain($url);
+        $this->domain = $this->convertDomain($url, $startPoint);
     }
 
-    public function getDomain()
+    public function getUrl()
     {
-        return $this->domain; 
+        return (string) $this->url; 
     }
 
-    private function convertDomain($url)
+    public function getParser() 
     {
-        $domain = '';
-        $url_parts = parse_url($url);
-        if ( ! isset($url_parts['scheme']))
-            $domain .= 'http';
-        else 
-            $domain .= $url_parts['scheme'];
+        return $this->url;
+    }
 
-        $domain .= '://';
+    private function convertDomain($url, $startPoint)
+    {
+        $this->url = new \webignition\Url\Url($url);
+        if ($this->url->getHost() === null) {
+            $this->url->setScheme('http');
+            $this->url->setHost($url);
+        }
 
-        if ( ! isset($url_parts['host']))
-            $domain .= $url;
-        else
-            $domain .= $url_parts['host'];
+        $this->url->setPath($startPoint);
 
-        return $domain;
+        return (string) $this->url;
     }
 }

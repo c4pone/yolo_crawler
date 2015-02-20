@@ -27,6 +27,6 @@ class LogSubscriber implements EventSubscriberInterface
 
     public function onPop(FilterLinkEvent $event)
     {
-        echo('crawl -> '.$event->getLink()->getFullUrl(). "\n");
+        echo('crawl -> '.$event->getLink()->getLinkHref(). "\n");
     }
 }

@@ -79,11 +79,11 @@ HTML;
             $links = $event->getLinks();
 
             $test->assertEquals(5, count($links));
-            $test->assertEquals('http://www.google.com', $links[0]->getFullUrl());
-            $test->assertEquals('https://www.google.com', $links[1]->getFullUrl());
-            $test->assertEquals('http://dmoz.com/link1', $links[2]->getFullUrl());
-            $test->assertEquals('http://dmoz.com/another1', $links[3]->getFullUrl());
-            $test->assertEquals('http://dmoz.com/one', $links[4]->getFullUrl());
+            $test->assertEquals('http://www.google.com', $links[0]->getLinkHref());
+            $test->assertEquals('https://www.google.com', $links[1]->getLinkHref());
+            $test->assertEquals('http://dmoz.com/link1', $links[2]->getLinkHref());
+            $test->assertEquals('http://dmoz.com/another1', $links[3]->getLinkHref());
+            $test->assertEquals('http://dmoz.com/one', $links[4]->getLinkHref());
         });
 
         $links = $crawler->crawl('dmoz.com');
@@ -203,6 +203,6 @@ class FuckThatLink implements Validator
 {
     public function isValid(Link $link)
     {
-        return ($link->getLinkHref() === '/');
+        return ($link->getLinkHref() === 'http://dmoz.com/');
     }
 }

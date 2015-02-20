@@ -13,7 +13,8 @@
         "symfony/dom-crawler": "2.5.9",
         "guzzlehttp/guzzle": "5.0.0",
         "symfony/event-dispatcher": "2.7.*@dev",
-        "chuyskywalker/rolling-curl": "3.1.0"
+        "chuyskywalker/rolling-curl": "3.1.0",
+        "webignition/absolute-url-deriver": "dev-master"
     },
     "require-dev": {
         "phpunit/phpunit": "3.7.x-dev",

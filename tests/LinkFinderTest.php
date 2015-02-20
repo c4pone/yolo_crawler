@@ -19,11 +19,11 @@ HTML;
 
         $extractor = new LinkFinder();
         $links = $extractor->getLinks($html);
-        $this->assertEquals('link1', $links[0]->getLinkHref());
-        $this->assertEquals('link2', $links[1]->getLinkHref());
+        $this->assertEquals('link1', $links[0]['href']);
+        $this->assertEquals('link2', $links[1]['href']);
 
-        $this->assertEquals('test', $links[0]->getLinkText());
-        $this->assertEquals('test', $links[1]->getLinkText());
+        $this->assertEquals('test', $links[0]['text']);
+        $this->assertEquals('test', $links[1]['text']);
     }
 
     public function testDmoz()

@@ -13,14 +13,9 @@ class Link {
 
     private $response;
 
-    public function __construct($href)
+    public function __construct($link_href)
     {
-        $this->link_href = $href;
-    }
-
-    public function getLinkHref()
-    {
-        return $this->link_href;
+        $this->link_href = $link_href;
     }
 
     public function getLinkText()
@@ -41,27 +36,15 @@ class Link {
      */
     public function isLeavingOriginDomain()
     {
-        if ($this->isExternalLink() && empty($this->origin_domain))
-            return true;
+        if (is_null($this->origin_domain)) 
+            throw new \Exception('origin is null');
 
-        elseif ($this->isExternalLink())
-            return (preg_match("|^".$this->origin_domain."|", $this->link_href)) ? false : true;
+        $domain = $this->origin_domain->getParser();
+        $link = new \webignition\Url\Url($this->link_href);
+        $domain_host = $domain->getHost();
+        $link_host = $link->getHost();
 
-        return false;
-    }
-
-    /**
-     * Checks if the given href is starting
-     * with http/https 
-     *
-     * @return boolean
-     */
-    public function isExternalLink()
-    {
-        if ($this->link_is_external === null) 
-            $this->link_is_external = (preg_match("|^https?://|", $this->link_href)) ? true : false;
-
-        return $this->link_is_external;
+        return  ! $domain_host->equals($link_host);
     }
 
     public function isValid()
@@ -81,24 +64,12 @@ class Link {
 
     /**
      * Returns the FullUrl 
-     * 
-     * Combines the given domain and href if the 
-     * href is not already a full url
      *
      * @return string
      */
-    public function getFullUrl()
+    public function getLinkHref()
     {
-        if ($this->isExternalLink()) 
-            return $this->link_href;
-
-        $url = $this->origin_domain;
-
-        if (substr($this->link_href, 0, 1) !== '/') {
-            $url .= '/';
-        }
-
-        return $url . $this->link_href;
+        return $this->link_href;
     }
 
     /**
@@ -108,7 +79,7 @@ class Link {
      */
     public function getHash()
     {
-        return sha1($this->getFullUrl());
+        return sha1($this->getLinkHref());
     }
 
     public function setLinkHref($href)
@@ -123,7 +94,7 @@ class Link {
         return $this;
     }
 
-    public function setOriginDomain($domain)
+    public function setOriginDomain(Domain $domain)
     {
         $this->origin_domain = $domain; 
         return $this;

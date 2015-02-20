@@ -35,7 +35,7 @@ class BrokenLinkFinderSubscriber implements EventSubscriberInterface
         {
             if ($validator->isValid($link)) {
                 // add get request to curl
-                $rollingCurl->get($link->getFullUrl(), null, array(&$link));
+                $rollingCurl->get($link->getLinkHref(), null, array(&$link));
             }
         }
 
@@ -45,7 +45,7 @@ class BrokenLinkFinderSubscriber implements EventSubscriberInterface
             \RollingCurl\RollingCurl $rollingCurl) use (&$brokenLinks) {
 
                 $link = $request->getOptions()[0];
-                echo ("checking -> ". $link->getFullUrl() ."\n");
+                echo ("checking -> ". $link->getLinkHref() ."\n");
                 $link->setStatusCode($request->getResponseInfo()['http_code']);
                 if ($link->getStatusCode() != 200)
                     $brokenLinks[] = $link;
