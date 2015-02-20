@@ -1,7 +1,6 @@
 <?php namespace WP\Crawler\Event;
 
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\EventDispatcher\Event;
 
 class LogSubscriber implements EventSubscriberInterface

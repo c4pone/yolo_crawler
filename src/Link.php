@@ -5,7 +5,6 @@ class Link {
 
     private $link_href;
     private $link_text;
-    private $link_is_external;
     private $link_origin;
     private $page_title;
     private $origin_domain;
@@ -36,7 +35,7 @@ class Link {
      */
     public function isLeavingOriginDomain()
     {
-        if (is_null($this->origin_domain)) 
+        if ($this->origin_domain === null) 
             throw new \Exception('origin is null');
 
         $domain = $this->origin_domain->getParser();

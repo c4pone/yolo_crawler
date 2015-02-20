@@ -51,6 +51,12 @@ class PageDownloader implements Downloader
         return $this->client; 
     }
 
+    /**
+     * Download web page and returns  response
+     *
+    * @return \GuzzleHttp\Message\ResponseInterface
+    * 
+    * */
     public function download($path, $max_tries = 3)
     {
         if ( ! is_int($max_tries))

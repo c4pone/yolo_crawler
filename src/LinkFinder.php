@@ -1,7 +1,6 @@
 <?php namespace WP\Crawler;
 
 use Symfony\Component\DomCrawler\Crawler;
-use WP\Crawler\Link;
 
 class LinkFinder implements LinkFinderInterface {
 

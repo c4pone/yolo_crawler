@@ -2,7 +2,6 @@
 
 use WP\Crawler\Domain;
 use WP\Crawler\Event\CrawlerEvents;
-use WP\Crawler\Event\FilterDomainEvent;
 use WP\Crawler\Event\FilterLinkEvent;
 use WP\Crawler\Event\FilterPageResponseEvent;
 use WP\Crawler\Event\FoundLinksEvent;
@@ -10,7 +9,6 @@ use WP\Crawler\Event\FilterCrawlerProcessEvent;
 use WP\Crawler\Downloader\Downloader;
 use WP\Crawler\Downloader\PageDownloader;
 use Symfony\Component\EventDispatcher\EventDispatcher;
-use Symfony\Component\EventDispatcher\Event;
 
 class DomainCrawler {
     private $dispatcher;
