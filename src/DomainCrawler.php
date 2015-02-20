@@ -8,6 +8,7 @@ use WP\Crawler\Event\FoundLinksEvent;
 use WP\Crawler\Event\FilterCrawlerProcessEvent;
 use WP\Crawler\Downloader\Downloader;
 use WP\Crawler\Downloader\PageDownloader;
+use WP\Crawler\Downloader\DownloadException;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 
 class DomainCrawler {
@@ -20,9 +21,9 @@ class DomainCrawler {
     /*
      * Keeps the domain that we crawl
      *
-     * @var string 
+     * @var WP\Crawler\Domain
      */
-    private $_domain;
+    private $domain;
 
     /*
      * Time to wait between each request
@@ -54,7 +55,7 @@ class DomainCrawler {
      * Set maximum attempts to download a page
      *
      * @param int $tries 
-     * @return $this;
+     * @return $this
      */
     public function setDownloadTries($tries)
     {
@@ -66,7 +67,7 @@ class DomainCrawler {
      * Set the time to wait between each request
      *
      * @param int $sec 
-     * @return $this;
+     * @return $this
      */
     public function setWaitTime($sec)
     {
@@ -78,7 +79,7 @@ class DomainCrawler {
      * Sets Downloader
      *
      * @param WP\Crawler\Downloader\Downloader $downloader
-     * @return $this;
+     * @return $this
      */
     public function setDownloader(Downloader $downloader)
     {
@@ -100,7 +101,7 @@ class DomainCrawler {
      * Sets EventDispatcher
      *
      * @param Symfony\Component\EventDispatcher\EventDispatcher $dispatcher
-     * @return $this;
+     * @return $this
      */
     public function setEventDispatcher(Symfony\Component\EventDispatcher\EventDispatcher $dispatcher)
     {
@@ -111,7 +112,7 @@ class DomainCrawler {
     /**
      * Returns EventDispatcher.
      *
-     * @return Symfony\Component\EventDispatcher\EventDispatcher
+     * @return \Symfony\Component\EventDispatcher\EventDispatcher
      */
     public function getEventDispatcher()
     {
@@ -131,7 +132,7 @@ class DomainCrawler {
         $process->start();
 
         $domain = new Domain($domain, $startPoint);
-        $this->_domain = $domain;
+        $this->domain = $domain;
 
         $this->dispatcher->dispatch(CrawlerEvents::onStart, new FilterCrawlerProcessEvent($process));
 
@@ -198,7 +199,7 @@ class DomainCrawler {
 
         foreach ($crawled_links as $link_data)
         {
-            $link = $this->linkFactory->getLink($link_data, $this->_domain, $origin);
+            $link = $this->linkFactory->getLink($link_data, $this->domain, $origin);
             $links[] = $link;
             $this->pushLinkToQueue($link);
         }
@@ -206,5 +207,3 @@ class DomainCrawler {
         $this->dispatcher->dispatch(CrawlerEvents::onFoundLinks, new FoundLinksEvent($links, $process));
     }
 }
-
-class BrokenLinkException extends \Exception {}
