@@ -1,8 +1,9 @@
 <?php namespace WP\Crawler\Event;
 
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use  WP\Crawler\Queue\Validator\NoJavascriptUrl;
+use  WP\Crawler\Queue\Validator\NoPseudoUrl;
 
+// this is just a hacky example do not use in live system
 class BrokenLinkFinderSubscriber implements EventSubscriberInterface
 {
     private $links = array();
@@ -27,7 +28,7 @@ class BrokenLinkFinderSubscriber implements EventSubscriberInterface
         $rollingCurl->setSimultaneousLimit(50);
 
         // kicks out javascript:void(0) and # urls
-        $validator = new NoJavascriptUrl();
+        $validator = new NoPseudoUrl();
 
         // loop through all the links and add them to rollingcurl
         foreach ($this->links as &$link)

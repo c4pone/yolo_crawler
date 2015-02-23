@@ -8,7 +8,7 @@ use WP\Crawler\Queue\QueueManager;
 use WP\Crawler\Queue\ArrayQueue;
 use WP\Crawler\Queue\Store\ArrayStore;
 use WP\Crawler\Queue\Validator\ValidFileExtension;
-use WP\Crawler\Queue\Validator\NoJavascriptUrl;
+use WP\Crawler\Queue\Validator\NoPseudoUrl;
 use WP\Crawler\Event\LogSubscriber;
 use WP\Crawler\Event\BrokenLinkFinderSubscriber;
 use Symfony\Component\EventDispatcher\EventDispatcher;
@@ -17,7 +17,7 @@ if (isset($argv[1])) {
     $domain = $argv[1];
 
     $manager = new QueueManager(new ArrayQueue(), new ArrayStore());
-    $manager->addValidator(new NoJavascriptUrl())
+    $manager->addValidator(new NoPseudoUrl())
         ->addValidator(new ValidFileExtension());
 
     $crawler = new DomainCrawler(
