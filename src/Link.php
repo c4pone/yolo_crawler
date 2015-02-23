@@ -106,7 +106,7 @@ class Link {
 
     public function setOrigin($link)
     {
-        $this->link_origin = $link; 
+        $this->link_origin = $link->getLinkHref(); 
         return $this;
     }
 
