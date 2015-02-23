@@ -38,10 +38,15 @@ class Link {
         if ($this->origin_domain === null) 
             throw new \Exception('origin is null');
 
+
         $domain = $this->origin_domain->getParser();
         $link = new \webignition\Url\Url($this->link_href);
         $domain_host = $domain->getHost();
         $link_host = $link->getHost();
+
+        if ($link_host === null) {
+            return false; 
+        }
 
         return  ! $domain_host->equals($link_host);
     }

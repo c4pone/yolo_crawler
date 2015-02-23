@@ -28,6 +28,13 @@ class LinkTest extends PHPUnit_Framework_TestCase {
         $this->assertTrue($link->isLeavingOriginDomain());
     }
 
+    public function testIsLeavingOriginDomain_LinkHasNoHost()
+    {
+        $link = new Link('callto:1337donotcare"');
+        $link->setOriginDomain(new Domain('http://codebuster.de'));
+        $this->assertFalse($link->isLeavingOriginDomain());
+    }
+
     public function testGetHash()
     {
         $link = new Link('yolo');
