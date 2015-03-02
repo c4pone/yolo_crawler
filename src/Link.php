@@ -66,6 +66,11 @@ class Link {
         return $this->origin_domain;
     }
 
+    public function getOrigin()
+    {
+        return $this->link_origin;
+    }
+
     /**
      * Returns the FullUrl 
      *
@@ -84,6 +89,19 @@ class Link {
     public function getHash()
     {
         return sha1($this->getLinkHref());
+    }
+
+    public function getResponse()
+    {
+        return $this->response; 
+    }
+
+    public function getHtml()
+    {
+        if ($this->response === null)
+            return '';
+
+        return $this->response->getBody()->__toString();
     }
 
     public function setLinkHref($href)
@@ -126,18 +144,4 @@ class Link {
     {
         $this->response = $response; 
     }
-
-    public function getResponse()
-    {
-        return $this->response; 
-    }
-
-    public function getHtml()
-    {
-        if ($this->response === null)
-            return '';
-
-        return $this->response->getBody()->__toString();
-    }
 }
-
